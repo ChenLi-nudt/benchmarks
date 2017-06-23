@@ -1,0 +1,4 @@
+parboil/datasets
+rodinia_3.1/data
+bin/
+!bin/*.sh
