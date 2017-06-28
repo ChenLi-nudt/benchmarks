@@ -20,8 +20,15 @@ rodinia_3.1/cuda/heartwall/heartwall
 rodinia_3.1/cuda/lavaMD/lavaMD
 rodinia_3.1/cuda/lud/cuda/lud_cuda
 rodinia_3.1/cuda/mummergpu/bin/
+rodinia_3.1/cuda/leukocyte/CUDA/leukocyte
+rodinia_3.1/cuda/nn/hurricane_gen
+rodinia_3.1/cuda/nn/nn
+rodinia_3.1/cuda/streamcluster/sc_gpu
+ML/bin/*
+ML/gemm/bin/*
 *.a
 *.o
 *.cu_o
 *.gch
 *.pyc
+*.cpp_o

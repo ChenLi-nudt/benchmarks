@@ -14,3 +14,5 @@ For parboil, run ./compile.sh. Note: you need to have the datasets directory
 present. The parboil driver will error telling you the benchmarks directory is
 missing, but it's really checking for a datasets directory in parboil/datasets.
 
+This works currently with cuda4.2 and higher. If you use cuda4.2, use gcc/g++
+lower than 4.7. 4.4 is easily installed on ubuntu.
