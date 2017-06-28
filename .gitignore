@@ -2,3 +2,16 @@ parboil/datasets
 rodinia_3.1/data
 bin/
 !bin/*.sh
+rodinia_3.1/cuda/gaussian/gaussian
+rodinia_3.1/cuda/hotspot/hotspot
+rodinia_3.1/cuda/nw/needle
+rodinia_3.1/cuda/particlefilter/particlefilter_float
+rodinia_3.1/cuda/particlefilter/particlefilter_naive
+rodinia_3.1/cuda/pathfinder/pathfinder
+rodinia_3.1/cuda/srad/srad_v2/srad
+rodinia_3.1/cuda/backprop/backprop
+rodinia_3.1/cuda/bfs/bfs
+rodinia_3.1/cuda/srad/srad_v1/srad
+*.o
+*.gch
+*.pyc
