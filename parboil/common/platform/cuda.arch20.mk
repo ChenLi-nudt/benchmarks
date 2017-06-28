@@ -17,7 +17,7 @@ CUDACC=$(CUDAHOME)/bin/nvcc
 CUDALINK=$(CUDAHOME)/bin/nvcc
 
 # Flags
-PLATFORM_CUDACFLAGS=-code=sm_20
+PLATFORM_CUDACFLAGS=-arch=sm_20
 PLATFORM_CUDALDFLAGS=-lm -lpthread
 
 

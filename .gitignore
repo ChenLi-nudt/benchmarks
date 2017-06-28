@@ -12,6 +12,7 @@ rodinia_3.1/cuda/srad/srad_v2/srad
 rodinia_3.1/cuda/backprop/backprop
 rodinia_3.1/cuda/bfs/bfs
 rodinia_3.1/cuda/srad/srad_v1/srad
+parboil/benchmarks/*/build
 *.o
 *.gch
 *.pyc
