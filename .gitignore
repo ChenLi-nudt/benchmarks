@@ -1,6 +1,8 @@
 parboil/datasets
 rodinia_3.1/data
-bin/
+bin/*
+parboil/bin/*
+rodinia_3.1/bin/*
 !bin/*.sh
 rodinia_3.1/cuda/gaussian/gaussian
 rodinia_3.1/cuda/hotspot/hotspot
@@ -13,6 +15,13 @@ rodinia_3.1/cuda/backprop/backprop
 rodinia_3.1/cuda/bfs/bfs
 rodinia_3.1/cuda/srad/srad_v1/srad
 parboil/benchmarks/*/build
+rodinia_3.1/cuda/dwt2d/dwt2d
+rodinia_3.1/cuda/heartwall/heartwall
+rodinia_3.1/cuda/lavaMD/lavaMD
+rodinia_3.1/cuda/lud/cuda/lud_cuda
+rodinia_3.1/cuda/mummergpu/bin/
+*.a
 *.o
+*.cu_o
 *.gch
 *.pyc
