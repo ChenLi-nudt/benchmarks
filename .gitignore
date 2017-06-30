@@ -36,3 +36,4 @@ profile/profile_output
 profile/*.txt
 profile/*.out
 profile/*.pgm
+profile/*_output
