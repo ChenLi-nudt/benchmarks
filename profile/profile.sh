@@ -3,7 +3,7 @@
 NVPROF=/usr/local/cuda-8.0/bin/nvprof
 OPTIONS=--print-gpu-trace
 OUTPUT_FILE=profile_output
-cleanup.sh
+./cleanup.sh
 rm $OUTPUT_FILE
 #parboil
 $NVPROF $OPTIONS ../parboil/bin/cutcp -i ../parboil/datasets/cutcp/small/input/watbox.sl40.pqr -o cutcp.out 2>> $OUTPUT_FILE

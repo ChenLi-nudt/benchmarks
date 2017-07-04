@@ -24,6 +24,7 @@ rodinia_3.1/cuda/leukocyte/CUDA/leukocyte
 rodinia_3.1/cuda/nn/hurricane_gen
 rodinia_3.1/cuda/nn/nn
 rodinia_3.1/cuda/streamcluster/sc_gpu
+parboil/benchmarks/*/run/*
 ML/bin/*
 ML/gemm/bin/*
 *.a

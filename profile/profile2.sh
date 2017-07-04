@@ -1,24 +1,22 @@
 #!/bin/bash
 #right now hardcord benchmarks
 NVPROF=/usr/local/cuda-8.0/bin/nvprof
-OPTIONS=--print-gpu-trace
-OUTPUT_FILE=profile_output
-cleanup.sh
-rm $OUTPUT_FILE
+OPTIONS=--print-gpu-trace --print-api-trace
+./cleanup.sh
 #parboil
 $NVPROF $OPTIONS ../parboil/bin/cutcp -i ../parboil/datasets/cutcp/small/input/watbox.sl40.pqr -o cutcp.out 2>> cutcp_output
 $NVPROF $OPTIONS ../parboil/bin/histo 20 4 -i ../parboil/datasets/histo/default/input/img.bin -o histo.out 2>> histo_output
 $NVPROF $OPTIONS ../parboil/bin/lbm 100 -i ../parboil/datasets/lbm/short/input/120_120_150_ldc.of -o lbm.out 2>> lbm_output 
 $NVPROF $OPTIONS ../parboil/bin/mri-gridding 32 0 -i ../parboil/datasets/mri-gridding/small/input/small.uks -o mri-gridding.out 2>> mri_output
 $NVPROF $OPTIONS ../parboil/bin/mri-q -i ../parboil/datasets/mri-q/small/input/32_32_32_dataset.bin -o mri-q.out 2>> mri-q_output
-$NVPROF $OPTIONS ../parboil/bin/sad -i ../parboil/datasets/sad/default/input/frame.bin ../parboil/datasets/sad/default/input/reference.bin -o sad.out 2>> sad_output
-$NVPROF $OPTIONS ../parboil/bin/sgemm -i ../parboil/datasets/sgemm/small/input/matrix1.txt ../parboil/datasets/sgemm/small/input/matrix2.txt ../parboil/datasets/sgemm/small/input/matrix2t.txt -o sgemm.out 2>> sgemm_output
-$NVPROF $OPTIONS ../parboil/bin/spmv -i ../parboil/datasets/spmv/small/input/1138_bus.mtx ../parboil/datasets/spmv/small/input/vector.bin -o spmv.out 2>> spmv_output
+$NVPROF $OPTIONS ../parboil/bin/sad -i ../parboil/datasets/sad/default/input/frame.bin,../parboil/datasets/sad/default/input/reference.bin -o sad.out 2>> sad_output
+$NVPROF $OPTIONS ../parboil/bin/sgemm -i ../parboil/datasets/sgemm/small/input/matrix1.txt,../parboil/datasets/sgemm/small/input/matrix2.txt,../parboil/datasets/sgemm/small/input/matrix2t.txt -o sgemm.out 2>> sgemm_output
+$NVPROF $OPTIONS ../parboil/bin/spmv -i ../parboil/datasets/spmv/small/input/1138_bus.mtx,../parboil/datasets/spmv/small/input/vector.bin -o spmv.out 2>> spmv_output
 $NVPROF $OPTIONS ../parboil/bin/stencil 128 128 32 100 -i ../parboil/datasets/stencil/small/input/128x128x32.bin -o stencil.out 2>> stencil_output
 #rodinia
 $NVPROF $OPTIONS ../rodinia_3.1/bin/backprop 256  2>> backprop_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/bfs ../rodinia_3.1/data/bfs/graph1MW_6.txt 2>> bfs_output
-$NVPROF $OPTIONS ../rodinia_3.1/bin/dwt2d ~/workspace/unified-benchmarks/rodinia_3.1/data/rgb.bmp -d 1024x1024 -f -5 -l 3 2>> dwt2d_output
+$NVPROF $OPTIONS ../rodinia_3.1/bin/dwt2d ../rodinia_3.1/data/rgb.bmp -d 1024x1024 -f -5 -l 3 2>> dwt2d_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/gaussian -f ../rodinia_3.1/data/gaussian/matrix4.txt 2>> gaussian_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/heartwall ../rodinia_3.1/data/heartwall/test.avi 20 2>> heartwall_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/hotspot 64 2 2 ../rodinia_3.1/data/hotspot/temp_64 ../rodinia_3.1/data/hotspot/power_64 output.out 2>> hotspot_output
@@ -34,3 +32,5 @@ $NVPROF $OPTIONS ../rodinia_3.1/bin/pathfinder 100000 100 20  2>> pathfinder_out
 $NVPROF $OPTIONS ../rodinia_3.1/bin/sc_gpu 10 20 256 65536 65536 1000 none output.txt 1 2>> sc_gpu_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/srad_v1 100 0.5 502 458 2>> srad_v1_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/srad_v2 2048 2048 0 127 0 127 0.5 2 2>> srad_v2_output
+#darknet
+$NVPROF $OPTIONS ../
