@@ -1,7 +1,7 @@
 #!/bin/bash
 #right now hardcord benchmarks
 NVPROF=/usr/local/cuda-8.0/bin/nvprof
-OPTIONS=--print-gpu-trace --print-api-trace
+OPTIONS=--print-gpu-trace --profile-api-trace --export-profile 
 ./cleanup.sh
 #parboil
 $NVPROF $OPTIONS ../parboil/bin/cutcp -i ../parboil/datasets/cutcp/small/input/watbox.sl40.pqr -o cutcp.out 2>> cutcp_output
@@ -22,10 +22,10 @@ $NVPROF $OPTIONS ../rodinia_3.1/bin/heartwall ../rodinia_3.1/data/heartwall/test
 $NVPROF $OPTIONS ../rodinia_3.1/bin/hotspot 64 2 2 ../rodinia_3.1/data/hotspot/temp_64 ../rodinia_3.1/data/hotspot/power_64 output.out 2>> hotspot_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/lavaMD -boxes1d 10 2>> lavaMD_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/leukocyte ../rodinia_3.1/data/leukocyte/testfile.avi 5  2>> leukocyte_output
-$NVPROF $OPTIONS ../rodinia_3.1/bin/lud_cuda -s 256 -v 2>> lud_cuda_output
+#$NVPROF $OPTIONS ../rodinia_3.1/bin/lud_cuda -s 256 -v 2>> lud_cuda_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/mummergpu ../rodinia_3.1/data/mummergpu/NC_003997.fna ../rodinia_3.1/data/mummergpu/NC_003997_q100bp.fna 2>> mummergpu_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/needle 2048 10 2>> needle_output
-$NVPROF $OPTIONS ../rodinia_3.1/bin/nn../rodinia_3.1/cuda/nn/filelist_4 -r 5 -lat 30 -lng 90  2>> nn_output
+$NVPROF $OPTIONS ../rodinia_3.1/bin/nn ../rodinia_3.1/cuda/nn/filelist_4 -r 5 -lat 30 -lng 90  2>> nn_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/particlefilter_float -x 128 -y 128 -z 10 -np 1000 2>> particlefilter_float_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/particlefilter_naive -x 128 -y 128 -z 10 -np 1000 2>> particlefilter_naive_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/pathfinder 100000 100 20  2>> pathfinder_output
