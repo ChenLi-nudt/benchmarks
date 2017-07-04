@@ -1,7 +1,7 @@
 #!/bin/bash
 #right now hardcord benchmarks
 NVPROF=/usr/local/cuda-8.0/bin/nvprof
-OPTIONS=--print-gpu-trace --print-api-trace --export-profile 
+OPTIONS="--print-gpu-trace --print-api-trace --export-profile"
 ./cleanup.sh
 #parboil
 $NVPROF $OPTIONS ../parboil/bin/cutcp -i ../parboil/datasets/cutcp/small/input/watbox.sl40.pqr -o cutcp.out 2>> cutcp_output

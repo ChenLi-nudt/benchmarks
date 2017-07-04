@@ -1,7 +1,7 @@
 #!/bin/bash
 #right now hardcord benchmarks
 NVPROF=/usr/local/cuda-8.0/bin/nvprof
-OPTIONS=--print-gpu-trace
+OPTIONS="--print-gpu-trace"
 OUTPUT_FILE=profile_output
 ./cleanup.sh
 rm $OUTPUT_FILE
