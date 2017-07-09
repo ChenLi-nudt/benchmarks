@@ -33,4 +33,3 @@ $NVPROF $OPTIONS ../rodinia_3.1/bin/sc_gpu 10 20 256 65536 65536 1000 none outpu
 $NVPROF $OPTIONS ../rodinia_3.1/bin/srad_v1 100 0.5 502 458 2>> srad_v1_output
 $NVPROF $OPTIONS ../rodinia_3.1/bin/srad_v2 2048 2048 0 127 0 127 0.5 2 2>> srad_v2_output
 #darknet
-$NVPROF $OPTIONS ../
