@@ -16,3 +16,13 @@ missing, but it's really checking for a datasets directory in parboil/datasets.
 
 This works currently with cuda4.0 and higher. If you use cuda4.2, use gcc/g++
 lower than 4.7. 4.4 is easily installed on ubuntu.
+
+
+To run the experiment scripts (in bin/):
+
+Make sure you cp the template_configs, and edit them appropriate.
+For example
+
+cp template_dirty_script.config dirty_script.config
+
+Then edit dirty_script.config

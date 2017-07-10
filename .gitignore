@@ -4,6 +4,7 @@ bin/*
 parboil/bin/*
 rodinia_3.1/bin/*
 !bin/*.sh
+!bin/template*.config
 rodinia_3.1/cuda/gaussian/gaussian
 rodinia_3.1/cuda/hotspot/hotspot
 rodinia_3.1/cuda/nw/needle
@@ -38,3 +39,7 @@ profile/*.txt
 profile/*.out
 profile/*.pgm
 profile/*_output
+profile/backups
+profile/unit_convert.sh
+darknet-gpgpusim/output.log
+darknet-gpgpusim/yolo.weights
