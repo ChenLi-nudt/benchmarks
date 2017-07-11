@@ -93,11 +93,23 @@ do
 
                 #rodinia
                 b_counter=0
-                for rbin in "${RODINIA_ARGS[@]}"
+                for rbin in "${RODINIA_BIN[@]}"
                 do
                     cmd=($RODINIA_BIN_PATH/$rbin)
                     cmd+=${RODINIA_ARGS[$b_counter]}
-                    ${cmd[@]} > ./${DIRNAME}/${CDATE}/${pbin}-${time_point}-${ptime}-${ltime}.log &
+                    ${cmd[@]} > ./${DIRNAME}/${CDATE}/${rbin}-${time_point}-${ptime}-${ltime}.log &
+                    lastpid=$!
+                    pids+=($lastpid)
+                    b_counter=$b_counter+1
+                done
+
+                #nvidia 
+                b_counter=0
+                for nbin in "${NVIDIA_BIN[@]}"
+                do
+                    cmd=($NVIDIA_BIN_PATH/$nbin)
+                    cmd+=${NVIDIA_ARGS[$b_counter]}
+                    ${cmd[@]} > ./${DIRNAME}/${CDATE}/${nbin}-${time_point}-${ptime}-${ltime}.log &
                     lastpid=$!
                     pids+=($lastpid)
                     b_counter=$b_counter+1
