@@ -4,50 +4,50 @@ source dirty_script.config
 
 if [ -z "$FREQUENCY" ]
 then 
-    echo "\$FREQUENCY is empty! Set it in script.config!"
+    echo "\$FREQUENCY is empty! Set it in dirty_script.config!"
     exit 1
 fi
 if [ -z "$NUM_POINTS" ]
 then 
-    echo "\$NUM_POINTS is empty! Set it in script.config!"
+    echo "\$NUM_POINTS is empty! Set it in dirty_script.config!"
     exit 1
 fi
 if [ -z "$CUDALAUNCH_TIMES" ]
 then 
-    echo "\$CUDALAUNCH_TIMES is empty! Set it in script.config!"
+    echo "\$CUDALAUNCH_TIMES is empty! Set it in dirty_script.config!"
     exit 1
 fi
 if [ -z "$PREDICTED_LAUNCH_TIMES" ]
 then 
-    echo "\$PREDICTED_LAUNCH_TIMES is empty! Set it in script.config!"
+    echo "\$PREDICTED_LAUNCH_TIMES is empty! Set it in dirty_script.config!"
     exit 1
 fi
 if [ -z "$DIRNAME" ]
 then
-    echo "\$DIRNAME is empty! Set it in script.config!"
+    echo "\$DIRNAME is empty! Set it in dirty_script.config!"
     exit 1
 fi
 if [ -z "$GPGPUSIM_CONFIG_PATH" ]
 then
-    echo "\$GPGPUSIM_CONFIG_PATH is empty. Set it in script.config!"
+    echo "\$GPGPUSIM_CONFIG_PATH is empty. Set it in dirty_script.config!"
     exit 1
 else
     GPGPUSIM_LOC=${GPGPUSIM_CONFIG_PATH}/gpgpusim.config
 fi
 if [ -z "$PARBOIL_BIN_PATH" ]
 then
-    echo "\$PARBOIL_BIN_PATH is empty. Set it in script.config!"
+    echo "\$PARBOIL_BIN_PATH is empty. Set it in dirty_script.config!"
     exit 1
 fi
 if [ -z "$RODINIA_BIN_PATH" ]
 then
-    echo "\$RODINIA_BIN_PATH is empty. Set it in script.config!"
+    echo "\$RODINIA_BIN_PATH is empty. Set it in dirty_script.config!"
     exit 1
 fi
 
 if [ -z "$ML_BIN_PATH" ]
 then
-    echo "\$ML_BIN_PATH is empty. Set it in script.config!"
+    echo "\$ML_BIN_PATH is empty. Set it in dirty_script.config!"
     exit 1
 fi
 
