@@ -3,6 +3,7 @@ rodinia_3.1/data
 bin/*
 parboil/bin/*
 rodinia_3.1/bin/*
+!bin/README.md
 !bin/*.sh
 !bin/template*.config
 rodinia_3.1/cuda/gaussian/gaussian
