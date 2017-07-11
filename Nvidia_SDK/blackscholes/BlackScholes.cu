@@ -70,7 +70,7 @@ const float    VOLATILITY = 0.30f;
 ////////////////////////////////////////////////////////////////////////////////
 // Main program
 ////////////////////////////////////////////////////////////////////////////////
-int blackscholes_main(int argc, char **argv, cudaStream_t stream)
+int main(int argc, char **argv)
 {
 	printf("[BlackScholes]\n");
 
@@ -148,9 +148,9 @@ int blackscholes_main(int argc, char **argv, cudaStream_t stream)
 
         shrLog("...copying input data to GPU mem.\n");
         //Copy options data to GPU memory for further processing
-        cutilSafeCall( cudaMemcpyAsync(d_StockPrice,  h_StockPrice,   OPT_SZ, cudaMemcpyHostToDevice, stream) );
-        cutilSafeCall( cudaMemcpyAsync(d_OptionStrike, h_OptionStrike,  OPT_SZ, cudaMemcpyHostToDevice, stream) );
-        cutilSafeCall( cudaMemcpyAsync(d_OptionYears,  h_OptionYears,   OPT_SZ, cudaMemcpyHostToDevice, stream) );
+        cutilSafeCall( cudaMemcpy(d_StockPrice,  h_StockPrice,   OPT_SZ, cudaMemcpyHostToDevice) );
+        cutilSafeCall( cudaMemcpy(d_OptionStrike, h_OptionStrike,  OPT_SZ, cudaMemcpyHostToDevice) );
+        cutilSafeCall( cudaMemcpy(d_OptionYears,  h_OptionYears,   OPT_SZ, cudaMemcpyHostToDevice) );
     shrLog("Data init done.\n\n");
 
 
@@ -159,7 +159,7 @@ int blackscholes_main(int argc, char **argv, cudaStream_t stream)
         cutilCheckError( cutResetTimer(hTimer) );
         cutilCheckError( cutStartTimer(hTimer) );
         for(i = 0; i < NUM_ITERATIONS; i++){
-            BlackScholesGPU<<<480, 128, 0, stream>>>(
+            BlackScholesGPU<<<480, 128>>>(
                 d_CallResult,
                 d_PutResult,
                 d_StockPrice,
@@ -169,7 +169,6 @@ int blackscholes_main(int argc, char **argv, cudaStream_t stream)
                 VOLATILITY,
                 OPT_N
             );
-            cudaStreamSynchronize(stream);
             cutilCheckMsg("BlackScholesGPU() execution failed\n");
         }
         cutilSafeCall( cudaThreadSynchronize() );
@@ -187,8 +186,8 @@ int blackscholes_main(int argc, char **argv, cudaStream_t stream)
 
     shrLog("\nReading back GPU results...\n");
         //Read back GPU results to compare them to CPU results
-        cutilSafeCall( cudaMemcpyAsync(h_CallResultGPU, d_CallResult, OPT_SZ, cudaMemcpyDeviceToHost, stream) );
-        cutilSafeCall( cudaMemcpyAsync(h_PutResultGPU,  d_PutResult,  OPT_SZ, cudaMemcpyDeviceToHost, stream) );
+        cutilSafeCall( cudaMemcpy(h_CallResultGPU, d_CallResult, OPT_SZ, cudaMemcpyDeviceToHost) );
+        cutilSafeCall( cudaMemcpy(h_PutResultGPU,  d_PutResult,  OPT_SZ, cudaMemcpyDeviceToHost) );
 
 
     shrLog("Checking the results...\n");
