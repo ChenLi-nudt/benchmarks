@@ -29,20 +29,9 @@ then
 else
     GPGPUSIM_LOC=${GPGPUSIM_CONFIG_PATH}/gpgpusim.config
 fi
-if [ -z "$PARBOIL_BIN_PATH" ]
+if [ -z "$BIN_PATH" ]
 then
-    echo "\$PARBOIL_BIN_PATH is empty. Set it in chimera_script.config!"
-    exit 1
-fi
-if [ -z "$RODINIA_BIN_PATH" ]
-then
-    echo "\$RODINIA_BIN_PATH is empty. Set it in chimera_script.config!"
-    exit 1
-fi
-
-if [ -z "$ML_BIN_PATH" ]
-then
-    echo "\$ML_BIN_PATH is empty. Set it in chimera_script.config!"
+    echo "\$BIN_PATH is empty. Set it in chimera_script.config!"
     exit 1
 fi
 
@@ -70,65 +59,26 @@ do
             sed -i "s/-deadline.*$/-deadline $deadline_cycle/g" $GPGPUSIM_LOC
             #run applications
 
-            #parboil
             b_counter=0
-            for pbin in "${PARBOIL_BIN[@]}"
+            for pbin in "${BIN[@]}"
             do
-                cmd=($PARBOIL_BIN_PATH/$pbin)
-                cmd+=${PARBOIL_ARGS[$b_counter]}
-                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${pbin}-${time_point}-${deadline}.log &
+		cd ${pbin}-folder
+                rm _*
+		cmd=(./${pbin})
+                cmd+=${ARGS[$b_counter]}
+                ${cmd[@]} > ../${DIRNAME}/${CDATE}/${pbin}-${time_point}-${deadline}.log & 
                 lastpid=$!
                 pids+=($lastpid)
                 b_counter=$b_counter+1
+		cd ..
             done
-
-            #rodinia
-            b_counter=0
-            for rbin in "${RODINIA_BIN[@]}"
-            do
-                cmd=($RODINIA_BIN_PATH/$rbin)
-                cmd+=${RODINIA_ARGS[$b_counter]}
-                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${rbin}-${time_point}-${deadline}.log &
-                lastpid=$!
-                pids+=($lastpid)
-                b_counter=$b_counter+1
-            done
-
-            #nvidia 
-            b_counter=0
-            for nbin in "${NVIDIA_BIN[@]}"
-            do
-                cmd=($NVIDIA_BIN_PATH/$nbin)
-                cmd+=${NVIDIA_ARGS[$b_counter]}
-                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${nbin}-${time_point}-${deadline}.log &
-                lastpid=$!
-                pids+=($lastpid)
-                b_counter=$b_counter+1
-            done
-
-            #ml
-            b_counter=0
-            for mbin in "${ML_BIN[@]}"
-            do
-                cmd=($ML_BIN_PATH/$mbin)
-                cmd+=${ML_ARGS[$b_counter]}
-                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${mbin}-${time_point}-${deadline}.log &
-                lastpid=$!
-                pids+=($lastpid)
-                b_counter=$b_counter+1
-            done
-
-        done #end deadline loop
 
         #this next loop just checks if enough applications are finished
         #then lets next loop iteration run
         #the weird construct below is a do while loop emulated in bash
-        num_benchmarks=$((${#PARBOIL_BIN[@]}+${#RODINIA_BIN[@]}+${#NVIDIA_BIN[@]}+${#ML_BIN[@]}))
-        num_running=$((num_benchmarks * ${#DEADLINES[@]}))
-        stop_num=$((num_running/2))
+        num_benchmarks=$((${#BIN[@]}))
+	num_running=$num_benchmarks
         while 
-            echo $num_running
-            echo $stop_num
             newpids=()
             for((j=0; j<num_running; j++)) #loop over time points
             do
@@ -141,8 +91,9 @@ do
             done
             pids=$newpids
             num_running=${#newpids[@]}
-            (( stop_num < num_running))
+            (( $num_running != 0))
         do
             sleep 60
         done
+        done #end deadline loop
 done #end num points loop
