@@ -12,16 +12,6 @@ then
     echo "\$NUM_POINTS is empty! Set it in chimera_script.config!"
     exit 1
 fi
-if [ -z "$CUDALAUNCH_TIMES" ]
-then 
-    echo "\$CUDALAUNCH_TIMES is empty! Set it in chimera_script.config!"
-    exit 1
-fi
-if [ -z "$PREDICTED_LAUNCH_TIMES" ]
-then 
-    echo "\$PREDICTED_LAUNCH_TIMES is empty! Set it in chimera_script.config!"
-    exit 1
-fi
 if [ -z "$DIRNAME" ]
 then
     echo "\$DIRNAME is empty! Set it in chimera_script.config!"
