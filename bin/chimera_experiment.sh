@@ -2,6 +2,11 @@
 # This script runs the benchmark experiments 
 source chimera_script.config
 
+if [ -z "$DEADLINES" ]
+then
+    echo "\$DEADLINES is empty! Set is in chimera_script.config!"
+    exit 1
+fi
 if [ -z "$FREQUENCY" ]
 then 
     echo "\$FREQUENCY is empty! Set it in chimera_script.config!"
