@@ -56,6 +56,7 @@ do
         for deadline in "${DEADLINES[@]}" #loop over deadlines
         do
 	    pids=()
+	    cpid=()
 	    deadline_cycle=`echo "scale=1; $deadline * $FREQUENCY" | bc`
             sed -i "s/-deadline.*$/-deadline $deadline_cycle/g" $GPGPUSIM_LOC
             #run applications
