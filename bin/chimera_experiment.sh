@@ -118,7 +118,7 @@ do
         #this next loop just checks if enough applications are finished
         #then lets next loop iteration run
         #the weird construct below is a do while loop emulated in bash
-        num_benchmarks=$((${#PARBOIL_BIN[@]}+${#RODINIA_BIN[@]}+${#ML_BIN[@]}))
+        num_benchmarks=$((${#PARBOIL_BIN[@]}+${#RODINIA_BIN[@]}+${#NVIDIA_BIN[@]}+${#ML_BIN[@]}))
         num_running=$((num_benchmarks * ${#PREDICTED_LAUNCH_TIMES[@]}))
         stop_num=$((num_running/2))
         while 
