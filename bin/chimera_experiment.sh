@@ -123,9 +123,9 @@ do
         stop_num=$((num_running/2))
         while 
             newpids=()
-            for((i=0; i<num_running; i++)) #loop over time points
+            for((j=0; j<num_running; j++)) #loop over time points
             do
-                cpid=${pids[$i]}
+                cpid=${pids[$j]}
                 echo "cpid:" $cpid
                 if [ -n "$(ps -p $cpid -o pid=)" ]
                 then
