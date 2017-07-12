@@ -119,9 +119,11 @@ do
         #then lets next loop iteration run
         #the weird construct below is a do while loop emulated in bash
         num_benchmarks=$((${#PARBOIL_BIN[@]}+${#RODINIA_BIN[@]}+${#NVIDIA_BIN[@]}+${#ML_BIN[@]}))
-        num_running=$((num_benchmarks * ${#PREDICTED_LAUNCH_TIMES[@]}))
+        num_running=$((num_benchmarks * ${#DEADLINES[@]}))
         stop_num=$((num_running/2))
         while 
+            echo $num_running
+            echo $stop_num
             newpids=()
             for((j=0; j<num_running; j++)) #loop over time points
             do
