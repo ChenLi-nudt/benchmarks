@@ -61,8 +61,8 @@ do
 	sed -i "s/-time_percentage.*$/-time_percentage $time_point/g" $GPGPUSIM_LOC
         for deadline in "${DEADLINES[@]}" #loop over deadlines
         do
-	    dtime_cycle=`echo "scale=1; $deadline * $FREQUENCY" | bc`
-            sed -i "s/-deadline.*$/-deadline $dtime_cycle/g" $GPGPUSIM_LOC
+	    deadline_cycle=`echo "scale=1; $deadline * $FREQUENCY" | bc`
+            sed -i "s/-deadline.*$/-deadline $deadline_cycle/g" $GPGPUSIM_LOC
             #run applications
 
             #parboil
@@ -71,7 +71,7 @@ do
             do
                 cmd=($PARBOIL_BIN_PATH/$pbin)
                 cmd+=${PARBOIL_ARGS[$b_counter]}
-                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${pbin}-${time_point}-${dtime}.log &
+                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${pbin}-${time_point}-${deadline}.log &
                 lastpid=$!
                 pids+=($lastpid)
                 b_counter=$b_counter+1
@@ -83,7 +83,7 @@ do
             do
                 cmd=($RODINIA_BIN_PATH/$rbin)
                 cmd+=${RODINIA_ARGS[$b_counter]}
-                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${rbin}-${time_point}-${dtime}.log &
+                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${rbin}-${time_point}-${deadline}.log &
                 lastpid=$!
                 pids+=($lastpid)
                 b_counter=$b_counter+1
@@ -95,7 +95,7 @@ do
             do
                 cmd=($NVIDIA_BIN_PATH/$nbin)
                 cmd+=${NVIDIA_ARGS[$b_counter]}
-                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${nbin}-${time_point}-${dtime}.log &
+                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${nbin}-${time_point}-${deadline}.log &
                 lastpid=$!
                 pids+=($lastpid)
                 b_counter=$b_counter+1
@@ -107,7 +107,7 @@ do
             do
                 cmd=($ML_BIN_PATH/$mbin)
                 cmd+=${ML_ARGS[$b_counter]}
-                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${mbin}-${time_point}-${dtime}.log &
+                ${cmd[@]} > ./${DIRNAME}/${CDATE}/${mbin}-${time_point}-${deadline}.log &
                 lastpid=$!
                 pids+=($lastpid)
                 b_counter=$b_counter+1
