@@ -55,6 +55,7 @@ do
 	sed -i "s/-time_percentage.*$/-time_percentage $time_point/g" $GPGPUSIM_LOC
         for deadline in "${DEADLINES[@]}" #loop over deadlines
         do
+	    pids=()
 	    deadline_cycle=`echo "scale=1; $deadline * $FREQUENCY" | bc`
             sed -i "s/-deadline.*$/-deadline $deadline_cycle/g" $GPGPUSIM_LOC
             #run applications
