@@ -61,11 +61,12 @@ do
     sed -i "s/-time_percentage.*$/-time_percentage $time_point/g" $GPGPUSIM_LOC
     for ltime in "${CUDALAUNCH_TIMES[@]}" #loop over cudalaunch times
     do
-        ltime_cycle=`echo "scale=1; $ltime * $FREQUENCY" | bc`
+        ltime_cycle=`echo "scale=3; $ltime * $FREQUENCY" | bc`
         sed -i "s/-cudalaunch_time.*$/-cudalaunch_time $ltime_cycle/g" $GPGPUSIM_LOC
         for ptime in "${PREDICTED_LAUNCH_TIMES[@]}" #loop over predicted times
         do
-            ptime_cycle=`echo "scale=1; $ptime * $FREQUENCY" | bc`
+            ptime_cycle=`echo "scale=3; $ptime * $FREQUENCY" | bc`
+            echo "ptime_cyc: "$ptime_cycle
             sed -i "s/-predicted_cudalaunch_time.*$/-predicted_cudalaunch_time $ptime_cycle/g" $GPGPUSIM_LOC
             #run applications
             pids=()
@@ -74,37 +75,38 @@ do
             for pbin in "${BIN[@]}"
             do
 		cd ${pbin}-folder
-                rm _*
+            #    rm _*
 		cmd=(./${pbin})
-                cmd+=${PARBOIL_ARGS[$b_counter]}
-                ${cmd[@]} > ../${DIRNAME}/${CDATE}/${pbin}-${time_point}-${ptime}-${ltime}.log &
+                cmd+=${ARGS[$b_counter]}
+             #   ${cmd[@]} > ../${DIRNAME}/${CDATE}/${pbin}-${time_point}-${ptime}-${ltime}.log &
                 lastpid=$!
                 pids+=($lastpid)
                 b_counter=$b_counter+1
                 cd ..
             done
 
-            #this next loop just checks if enough applications are finished
-            #then lets next loop iteration run
-            #the weird construct below is a do while loop emulated in bash
-            #this was needed for an earlier version; it can be rewritten 
-            #to be much cleaner
-            num_benchmarks=$((${#BIN[@]}))
-            while 
-                num_running=0
-                for((j=0; j<num_benchmarks; j++)) #loop over time points
-                do
-                    cpid=${pids[$j]}
-                    echo "cpid:" $cpid
-                    if [ -n "$(ps -p $cpid -o pid=)" ]
-                    then
-                        num_running+=1
-                    fi
-                done
-                (( $num_running != 0))
-            do
-                sleep 60
-            done
+            ##this next loop just checks if enough applications are finished
+            ##then lets next loop iteration run
+            ##the weird construct below is a do while loop emulated in bash
+            ##this was needed for an earlier version; it can be rewritten 
+            ##to be much cleaner
+            #num_benchmarks=$((${#BIN[@]}))
+            #while 
+            #    num_running=0
+            #    for((j=0; j<num_benchmarks; j++)) #loop over time points
+            #    do
+            #        cpid=${pids[$j]}
+            #        echo "cpid:" $cpid
+            #        if [0]
+            #        if [ -n "$(ps -p $cpid -o pid=)" ]
+            #        then
+            #            num_running+=1
+            #        fi
+            #    done
+            #    (( $num_running != 0))
+            #do
+            #    sleep 60
+            #done
         done #end predicted time loop
     done #end launch time loop
 done #end num points loop

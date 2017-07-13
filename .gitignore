@@ -46,3 +46,4 @@ darknet-gpgpusim/output.log
 darknet-gpgpusim/yolo.weights
 Nvidia_SDK/blackscholes/blackscholes
 ML/gemm/gemm
+!bin/*.py
