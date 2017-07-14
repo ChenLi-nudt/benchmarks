@@ -45,6 +45,6 @@ profile/unit_convert.sh
 darknet-gpgpusim/output.log
 darknet-gpgpusim/yolo.weights
 Nvidia_SDK/blackscholes/blackscholes
-Nvidia_SDK/bin
+Nvidia_SDK/bin/
 ML/gemm/gemm
 !bin/*.py

@@ -5,6 +5,8 @@ import re
 import csv
 import subprocess
 from plumbum.cmd import grep, awk, ls, head, tail, wc
+def pause():
+    prog_pause=raw_input("Press Enter")
 def natural_key(string_):
     """See http://www.codinghorror.com/blog/archives/001018.html"""
     return [int(s) if s.isdigit() else s for s in re.split(r'(\d+)',string_)]
@@ -80,6 +82,9 @@ for log in logs:
     logname = log
     log = log.rstrip('.log')
     appname,time_percentage,predicted,actual=log.rsplit("-",3)
+    time_percentage=float(time_percentage)
+    predicted=int(predicted)
+    actual=int(actual)
 
     #get preemption_time
     preempt_timecmd = grep['-E']['End_preemption'][logname] | tail['-n 1']
@@ -111,12 +116,16 @@ for log in logs:
     time_point=re.findall(r'\d+',time_point)
     time_point=int(time_point[0])
     preemption_time=time_point-preempt_point
+
     if last_predicted != predicted:
         if last_predicted != 0:
-            cur_list[appname,float(time_percentage),int(last_predicted)]=float(preemption_total)/actual_counter
-            per_list[appname,float(time_percentage),int(last_predicted)]=(float(checkpoint_percent_total)/actual_counter, float(checkpoint_percent_total)/actual_counter,float(num_dirtied_percent_total)/actual_counter)
+            print "I assigned %s %d %d" % (last_appname,last_time_percentage,last_predicted)
+            cur_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(preemption_total)/actual_counter
+            per_list[last_appname,float(last_time_percentage),int(last_predicted)]=(float(checkpoint_percent_total)/actual_counter, float(checkpoint_percent_total)/actual_counter,float(num_dirtied_percent_total)/actual_counter)
         actual_counter=1
         last_predicted=predicted
+        last_time_percentage=time_percentage
+        last_appname=appname
         preemption_total=preemption_time
         checkpoint_percent_total=float(num_checkpointed)/float(total)
         drained_percent_total=float(num_drained)/float(total)
