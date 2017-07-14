@@ -1,5 +1,5 @@
 include ../../rodinia_3.1/common/make.config
-CUDACFLAGS = -arch compute_20 --use_fast_math
+CUDACFLAGS = --use_fast_math
 LDFLAGS = -L$(CUDA_LIB_DIR) -L../shared/lib -lcuda -lcudart -lm
 INCLUDES = -I. -I$(CUDA_DIR)/include -I../common/inc -I../shared/inc
 OTHERFLAGS = -v -O3

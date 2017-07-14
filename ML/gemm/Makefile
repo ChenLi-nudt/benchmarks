@@ -1,10 +1,10 @@
-CUDACFLAGS = -O3 -arch compute_20
+CUDACFLAGS = -O3
 SOURCEFILES = gemm.cu
 
 TARGET=gemm
 
 $(TARGET):
-	nvcc $(LDFLAGS) $(CUDACFLAGS) $(SOURCEFILES) $(OTHERFLAGS) -o $@
+	nvcc $(SOURCEFILES) $(CUDACFLAGS) -o $@
 	cp $@ ../bin
 
 clean:
