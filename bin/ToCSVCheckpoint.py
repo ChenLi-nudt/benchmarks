@@ -88,16 +88,27 @@ for log in logs:
 
     #get preemption_time
     preempt_timecmd = grep['-E']['End_preemption'][logname] | tail['-n 1']
-    num_checkpoint=grep['-E']['End_preemption:'][logname] | grep['-E']['Checkpoint done'] | wc['-l']
-    num_checkpointed= num_checkpoint.run(retcode=None)[1]
-    num_drain=grep['-E']['End_preemption:'][logname] | grep['-E']['Drain done'] | wc['-l']
-    num_drained= num_drain.run(retcode=None)[1]
-    num_dirty=grep['-E']['End_preemption:'][logname] | grep['-E']['Dirty done'] | wc['-l']
-    num_dirtied= num_dirty.run(retcode=None)[1]
+
+
+    #get choice information
+    print logname
+    allDrainCmd=grep['-E']['End_preemption:'][logname] | grep['-E']['all drain'] | wc['-l']
+    isAllDrain= allDrainCmd.run(retcode=None)[1]
+    isAllDrain = isAllDrain.encode('utf-8')
+    isAllDrain = int(isAllDrain)
+    if isAllDrain:
+        num_checkpointed=1
+        num_drained=0
+        num_dirtied=0
+    else:
+        num_checkpoint=grep['-E']['End_preemption:'][logname] | grep['-E']['Checkpoint'] | wc['-l']
+        num_checkpointed= num_checkpoint.run(retcode=None)[1]
+        num_drain=grep['-E']['End_preemption:'][logname] | grep['-E']['Drain'] | wc['-l']
+        num_drained= num_drain.run(retcode=None)[1]
+        num_dirty=grep['-E']['End_preemption:'][logname] | grep['-E']['Dirty'] | wc['-l']
+        num_dirtied= num_dirty.run(retcode=None)[1]
+
     total = int(num_checkpointed) + int(num_drained) + int(num_dirtied)
-
-
-
 
     preempt_timecmd = grep['-E']['End_preemption'][logname] | tail['-n 1']
     value = preempt_timecmd.run(retcode=None)[1]
@@ -109,13 +120,16 @@ for log in logs:
         error=0
     #    print value
     value=value.split(",")
-    preempt_point=value[4]
-    preempt_point=re.findall(r'\d+',preempt_point)
-    preempt_point=int(preempt_point[0])
-    time_point=value[3]
-    time_point=re.findall(r'\d+',time_point)
-    time_point=int(time_point[0])
-    preemption_time=time_point-preempt_point
+    if isAllDrain:
+        preemption_time=0
+    else:
+        preempt_point=value[4]
+        preempt_point=re.findall(r'\d+',preempt_point)
+        preempt_point=int(preempt_point[0])
+        time_point=value[3]
+        time_point=re.findall(r'\d+',time_point)
+        time_point=int(time_point[0])
+        preemption_time=time_point-preempt_point
 
     if last_predicted != predicted:
         if last_predicted != 0:
@@ -142,5 +156,9 @@ for log in logs:
         csvname2="CheckpointChoicePercentages.csv"
         out=csv.writer(open(csvname,"w"), delimiter=',')
         out2=csv.writer(open(csvname2,"w"), delimiter=',')
+#assign last one
+print "I assigned %s %d %d" % (last_appname,last_time_percentage,last_predicted)
+cur_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(preemption_total)/actual_counter
+per_list[last_appname,float(last_time_percentage),int(last_predicted)]=(float(checkpoint_percent_total)/actual_counter, float(checkpoint_percent_total)/actual_counter,float(num_dirtied_percent_total)/actual_counter)
 printPreemptTimes(cur_list, out)
 printPreemptTimes(per_list, out2)
