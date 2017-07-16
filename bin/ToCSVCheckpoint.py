@@ -69,10 +69,14 @@ logs.sort(key=natural_key)
 #init lists and hash table
 cur_list={}
 per_list={}
-
+total_context_list={}
+checkpoint_list={}
+dirty_list={}
 
 lastName="nothing"
 actual_counter=0
+checkpoint_counter=0
+dirty_counter=0
 preemption_total=0
 last_predicted=0
 checkpoint_percent_total=0
@@ -86,12 +90,27 @@ for log in logs:
     predicted=int(predicted)
     actual=int(actual)
 
+    #get context size stats
+    totalContextSizeCmd=grep['-E']['context'][logname] | awk['{sum += $18} END{if(NR>0) print sum/NR; else print "N/A"}']
+    totalContextSize = totalContextSizeCmd.run(retcode=None)[1]
+    totalContextSize = str(totalContextSize)
+    totalContextSize = totalContextSize.strip()
+
+    CheckpointSizeCmd=grep['-E']['context'][logname] | grep['-E']['checkpoint'] | awk['{sum += $18} END{if(NR>0) print sum/NR; else print "N/A"}']
+    CheckpointSize = CheckpointSizeCmd.run(retcode=None)[1]
+    CheckpointSize = str(CheckpointSize)
+    CheckpointSize = CheckpointSize.strip()
+
+    DirtySizeCmd=grep['-E']['context'][logname] | grep['-E']['dirty'] | awk['{sum += $18} END{if(NR>0) print sum/NR; else print "N/A"}']
+    DirtySize = DirtySizeCmd.run(retcode=None)[1]
+    DirtySize = str(DirtySize)
+    DirtySize = DirtySize.strip()
+
     #get preemption_time
     preempt_timecmd = grep['-E']['End_preemption'][logname] | tail['-n 1']
 
 
     #get choice information
-    print logname
     allDrainCmd=grep['-E']['End_preemption:'][logname] | grep['-E']['all drain'] | wc['-l']
     isAllDrain= allDrainCmd.run(retcode=None)[1]
     isAllDrain = isAllDrain.encode('utf-8')
@@ -133,9 +152,20 @@ for log in logs:
 
     if last_predicted != predicted:
         if last_predicted != 0:
-            print "I assigned %s %d %d" % (last_appname,last_time_percentage,last_predicted)
             cur_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(preemption_total)/actual_counter
             per_list[last_appname,float(last_time_percentage),int(last_predicted)]=(float(checkpoint_percent_total)/actual_counter, float(checkpoint_percent_total)/actual_counter,float(num_dirtied_percent_total)/actual_counter)
+            if totalcontextsize_total != "Invalid":
+                total_context_list[last_appname,float(last_time_percentage),int(last_predicted)]=totalcontextsize_total/totalcontextsize_counter
+            else:
+                total_context_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
+            if checkpointsize_total!= "Invalid":
+                checkpoint_list[last_appname,float(last_time_percentage),int(last_predicted)]=checkpointsize_total/checkpointsize_counter
+            else:
+                checkpoint_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
+            if dirtysize_total!= "Invalid":
+                dirty_list[last_appname,float(last_time_percentage),int(last_predicted)]=dirtysize_total/dirtysize_counter
+            else:
+                dirty_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
         actual_counter=1
         last_predicted=predicted
         last_time_percentage=time_percentage
@@ -144,21 +174,78 @@ for log in logs:
         checkpoint_percent_total=float(num_checkpointed)/float(total)
         drained_percent_total=float(num_drained)/float(total)
         num_dirtied_percent_total=float(num_dirtied)/float(total)
+        if totalContextSize != "N/A":
+            totalcontextsize_counter=1
+            totalcontextsize_total=float(totalContextSize)
+        else:
+            totalcontextsize_total="Invalid"
+        if CheckpointSize!= "N/A":
+            checkpointsize_counter=1
+            checkpointsize_total=float(CheckpointSize)
+        else:
+            checkpointsize_total="Invalid"
+        if DirtySize!= "N/A":
+            dirtysize_counter=1
+            dirtysize_total=float(DirtySize)
+        else:
+            dirtysize_total="Invalid"
     else:
         actual_counter+=1
         preemption_total+=preemption_time
         checkpoint_percent_total=float(num_checkpointed)/float(total)
         drained_percent_total=float(num_drained)/float(total)
         num_dirtied_percent_total=float(num_dirtied)/float(total)
+        if totalContextSize != "N/A":
+            if totalcontextsize_total=="Invalid":
+                totalcontextsize_counter=1
+                totalcontextsize_total=float(totalContextSize)
+            else:
+                totalcontextsize_counter+=1
+                totalcontextsize_total+=float(totalContextSize)
+        if CheckpointSize!= "N/A":
+            if checkpointsize_total=="Invalid":
+                checkpointsize_counter=1
+                checkpointsize_total=float(CheckpointSize)
+            else:
+                checkpointsize_counter+=1
+                checkpointsize_total+=float(CheckpointSize)
+        if DirtySize!= "N/A":
+            if dirtysize_total=="Invalid":
+                dirtysize_counter=1
+                dirtysize_total=float(DirtySize)
+            else:
+                dirtysize_counter+=1
+                dirtysize_total+=float(DirtySize)
     if PreemptTimeFlag:
         PreemptTimeFlag=0
         csvname="CheckpointPreemptionTimes.csv"
         csvname2="CheckpointChoicePercentages.csv"
+        csvname3="CheckpointAverageContextSizePerTB.csv"
+        csvname4="CheckpointAverageCheckpointSizePerTB.csv"
+        csvname5="CheckpointAverageDirtySizePerTB.csv"
         out=csv.writer(open(csvname,"w"), delimiter=',')
         out2=csv.writer(open(csvname2,"w"), delimiter=',')
+        out3=csv.writer(open(csvname3,"w"), delimiter=',')
+        out4=csv.writer(open(csvname4,"w"), delimiter=',')
+        out5=csv.writer(open(csvname5,"w"), delimiter=',')
 #assign last one
-print "I assigned %s %d %d" % (last_appname,last_time_percentage,last_predicted)
 cur_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(preemption_total)/actual_counter
 per_list[last_appname,float(last_time_percentage),int(last_predicted)]=(float(checkpoint_percent_total)/actual_counter, float(checkpoint_percent_total)/actual_counter,float(num_dirtied_percent_total)/actual_counter)
+
+if totalcontextsize_total != "Invalid":
+    total_context_list[last_appname,float(last_time_percentage),int(last_predicted)]=totalcontextsize_total/totalcontextsize_counter
+else:
+    total_context_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
+if checkpointsize_total!= "Invalid":
+    checkpoint_list[last_appname,float(last_time_percentage),int(last_predicted)]=checkpointsize_total/checkpointsize_counter
+else:
+    checkpoint_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
+if dirtysize_total!= "Invalid":
+    dirty_list[last_appname,float(last_time_percentage),int(last_predicted)]=dirtysize_total/dirtysize_counter
+else:
+    dirty_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
 printPreemptTimes(cur_list, out)
 printPreemptTimes(per_list, out2)
+printPreemptTimes(total_context_list, out3)
+printPreemptTimes(checkpoint_list, out4)
+printPreemptTimes(dirty_list, out5)
