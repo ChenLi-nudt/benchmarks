@@ -67,12 +67,19 @@ logs.sort(key=natural_key)
 #init lists and hash table
 cur_list={}
 per_list={}
+context_list={}
 
 lastName="nothing"
 for log in logs:
     logname = log
     log = log.rstrip('.log')
     appname,time_percentage,deadline=log.rsplit("-",2)
+
+    #get context size
+    contextSizeCmd=grep['-E']['context'][logname] | awk['{sum += $15} END{if(NR>0) print sum/NR; else print "N/A"}']
+    contextSize = contextSizeCmd.run(retcode=None)[1]
+    contextSize = str(contextSize)
+    contextSize = contextSize.strip()
 
     #get preemption_time
     preempt_timecmd = grep['-E']['End_preemption'][logname] | tail['-n 1']
@@ -101,15 +108,19 @@ for log in logs:
     preemption_time=time_point-preempt_point
     cur_list[appname,float(time_percentage),int(deadline)]=preemption_time
     per_list[appname,float(time_percentage),int(deadline)]=(float(num_switched)/float(total), float(num_drained)/float(total), float(num_flushed)/float(total))
+    context_list[appname,float(time_percentage),int(deadline)]=contextSize
     if PreemptTimeFlag:
         PreemptTimeFlag=0
         csvname="ChimeraPreemptionTimes.csv"
         csvname2="ChimeraChoicePercentages.csv"
+        csvname3="ChimeraContextSizePerTB.csv"
         out=csv.writer(open(csvname,"w"), delimiter=',')
         out2=csv.writer(open(csvname2,"w"), delimiter=',')
+        out3=csv.writer(open(csvname3,"w"), delimiter=',')
     if lastName==appname:
         nothing=0
     else:
         lastName=appname
 printPreemptTimes(cur_list, out)
 printPreemptTimes(per_list, out2)
+printPreemptTimes(context_list,out3)
