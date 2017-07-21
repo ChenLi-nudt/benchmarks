@@ -1,6 +1,6 @@
 pkill lbm
 pkill cutcp
 pkill stencil
-pkill blackscholes
+pkill BlackScholes
 pkill mri-q
 pkill gemm
