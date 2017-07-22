@@ -74,6 +74,8 @@ checkpoint_list={}
 dirty_list={}
 overhead_list={}
 checkpoint_per_list={}
+checkpoint_one_list={}
+checkpoint_two_list={}
 
 lastName="nothing"
 actual_counter=0
@@ -226,9 +228,13 @@ for log in logs:
                 if overhead_total !="Invalid":
                     overhead_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(overhead_total)/overhead_counter
                     checkpoint_per_list[last_appname,float(last_time_percentage),int(last_predicted)]=(float(chk1_overhead_total)/overhead_counter,float(chk2_overhead_total)/overhead_counter)
+                    checkpoint_one_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(chk1_overhead_total)/overhead_counter
+                    checkpoint_two_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(chk2_overhead_total)/overhead_counter
                 else:
                     overhead_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
                     checkpoint_per_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
+                    checkpoint_one_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
+                    checkpoint_two_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
                 if totalcontextsize_total != "Invalid":
                     total_context_list[last_appname,float(last_time_percentage),int(last_predicted)]=totalcontextsize_total/totalcontextsize_counter
                 else:
@@ -320,6 +326,8 @@ for log in logs:
             csvname5="CheckpointAverageDirtySizePerTB.csv"
             csvname6="CheckpointOverheadAverage.csv"
             csvname7="CheckpointDirtyComparison.csv"
+            csvname8="Checkpoint1.csv"
+            csvname9="Checkpoint2.csv"
             out=csv.writer(open(csvname,"w"), delimiter=',')
             out2=csv.writer(open(csvname2,"w"), delimiter=',')
             out3=csv.writer(open(csvname3,"w"), delimiter=',')
@@ -327,6 +335,8 @@ for log in logs:
             out5=csv.writer(open(csvname5,"w"), delimiter=',')
             out6=csv.writer(open(csvname6,"w"), delimiter=',')
             out7=csv.writer(open(csvname7,"w"), delimiter=',')
+            out8=csv.writer(open(csvname8,"w"), delimiter=',')
+            out9=csv.writer(open(csvname9,"w"), delimiter=',')
 #assign last one
 if actual_counter>0:
     cur_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(preemption_total)/actual_counter
@@ -348,16 +358,19 @@ else:
 if overhead_total!= "Invalid":
     overhead_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(overhead_total)/overhead_counter
     checkpoint_per_list[last_appname,float(last_time_percentage),int(last_predicted)]=(float(chk1_overhead_total)/overhead_counter,float(chk2_overhead_total)/overhead_counter)
+    checkpoint_one_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(chk1_overhead_total)/overhead_counter
+    checkpoint_two_list[last_appname,float(last_time_percentage),int(last_predicted)]=float(chk2_overhead_total)/overhead_counter
 else:
     overhead_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
     checkpoint_per_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
-
+    checkpoint_one_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
+    checkpoint_two_list[last_appname,float(last_time_percentage),int(last_predicted)]="N/A"
 printPreemptTimes(cur_list, out)
 printPreemptTimes(per_list, out2)
 printPreemptTimes(total_context_list, out3)
 printPreemptTimes(checkpoint_list, out4)
 printPreemptTimes(dirty_list, out5)
 printPreemptTimes(overhead_list, out6)
-print "hi"
 printPreemptTimes(checkpoint_per_list, out7)
-print "byte"
+printPreemptTimes(checkpoint_one_list, out8)
+printPreemptTimes(checkpoint_two_list, out9)
