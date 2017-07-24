@@ -121,7 +121,7 @@ for log in logs:
         except:
             chk1timeEnd1=0
 
-        chk1timeEnd2Cmd= grep['-E']['End_preemption'][logname] | awk['{sum +=$11} END{if (NR>0) print sum; else print "N/A"}']
+        chk1timeEnd2Cmd= grep['-E']['End_preemption: Checkpoint'][logname] | awk['{sum +=$11} END{if (NR>0) print sum; else print "N/A"}']
         chk1timeEnd2= chk1timeEnd2Cmd.run(retcode=None)[1]
         chk1timeEnd2=str(chk1timeEnd2)
         chk1timeEnd2=chk1timeEnd2.strip(',')
@@ -149,8 +149,8 @@ for log in logs:
 
         numChk = numChk1 + numChk2
         
-        chk1time = chk1timeStart - chk1timeEnd1
-        chk1time2 = chk1timeStart - chk1timeEnd2
+        chk1time = chk1timeEnd1 - chk1timeStart
+        chk1time2 = chk1timeEnd2
 
         if numChk==0:
             averageChkOverhead="N/A"
