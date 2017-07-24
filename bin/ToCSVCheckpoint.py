@@ -104,28 +104,31 @@ for log in logs:
         print "%s-%.3f-%d-%d is not preempted" % (appname,time_percentage,predicted,actual)
     else:
         #get avg checkpoint overead
-        #checkpoint overhead is (chkpt_done_time - ( preedict_preempt_time - predicted_time_length) 
-        # = chkpt_done_time - predict_preempt_time + predicted_time_length  
-        #avg is sum(chkpt_done_time)/(#TBs which checkpoint)
-        awk_cmd_string = '{sum += ($11 - $19 + '
-        awk_cmd_string += str(predicted_cycles)  + ')} END{if(NR>0) print sum; else print "N/A"}'
-        chk1timeCmd = grep['-E']['Checkpoint done'][logname] | awk[awk_cmd_string]
-        chk1time= chk1timeCmd.run(retcode=None)[1]
-        chk1time=str(chk1time)
+        chk1timeStartCmd = grep['-E']['checkpoint switching starts'][logname] | awk['{sum +=$14} END{if (NR>0) print sum; else print "N/A"}']
+        chk1timeStart= chk1timeStartCmd.run(retcode=None)[1]
+        chk1timeStart=str(chk1timeStart)
         try:
-            chk1time = int(chk1time)
+            chk1timeStart= int(chk1timeStart)
         except:
-            chk1time=0 
-        awk_cmd_string = '{sum += ($10 - $18 + '
-        awk_cmd_string += str(predicted_cycles)  + ')} END{if(NR>0) print sum; else print "N/A"}'
-        chk1timeCmd2 = grep['-E']['Start_preemption_again'][logname] | awk[awk_cmd_string]
-        chk1time2= chk1timeCmd2.run(retcode=None)[1]
-        chk1time2  = str(chk1time2)
-        chk1time2 = chk1time2.strip(',')
+            chk1timeStart=0 
+
+        chk1timeEnd1Cmd= grep['-E']['Start_preemption_again'][logname] | awk['{sum +=$10} END{if (NR>0) print sum; else print "N/A"}']
+        chk1timeEnd1= chk1timeEnd1Cmd.run(retcode=None)[1]
+        chk1timeEnd1=str(chk1timeEnd1)
+        chk1timeEnd1=chk1timeEnd1.strip(',')
         try:
-            chk1time2=int(chk1time2)
+            chk1timeEnd1=int(chk1timeEnd1)
         except:
-            chk1time2=0
+            chk1timeEnd1=0
+
+        chk1timeEnd2Cmd= grep['-E']['End_preemption'][logname] | awk['{sum +=$11} END{if (NR>0) print sum; else print "N/A"}']
+        chk1timeEnd2= chk1timeEnd2Cmd.run(retcode=None)[1]
+        chk1timeEnd2=str(chk1timeEnd2)
+        chk1timeEnd2=chk1timeEnd2.strip(',')
+        try:
+            chk1timeEnd2=int(chk1timeEnd2)
+        except:
+            chk1timeEnd2=0
 
         awk_cmd_string = '{sum += ($11 - $14)} END{if(NR>0) print sum; else print "N/A"}'
         chk2timeCmd = grep['-E']['End_preemption: Dirty'][logname] | awk[awk_cmd_string]
@@ -146,6 +149,9 @@ for log in logs:
 
         numChk = numChk1 + numChk2
         
+        chk1time = chk1timeStart - chk1timeEnd1
+        chk1time2 = chk1timeStart - chk1timeEnd2
+
         if numChk==0:
             averageChkOverhead="N/A"
             avgChk1Overhead="N/A"
