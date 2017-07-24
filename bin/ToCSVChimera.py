@@ -68,15 +68,18 @@ logs.sort(key=natural_key)
 cur_list={}
 per_list={}
 context_list={}
-
+drainLat_list={}
+switchLat_list={}
 lastName="nothing"
 for log in logs:
     logname = log
     log = log.rstrip('.log')
     appname,time_percentage,deadline=log.rsplit("-",2)
 
+
+
     #get context size
-    contextSizeCmd=grep['-E']['context'][logname] | awk['{sum += $15} END{if(NR>0) print sum/NR; else print "N/A"}']
+    contextSizeCmd=grep['-E']['context size'][logname] | awk['{sum += $15} END{if(NR>0) print sum/NR; else print "N/A"}']
     contextSize = contextSizeCmd.run(retcode=None)[1]
     contextSize = str(contextSize)
     contextSize = contextSize.strip()
@@ -85,11 +88,14 @@ for log in logs:
     preempt_timecmd = grep['-E']['End_preemption'][logname] | tail['-n 1']
     num_switch=grep['-E']['Start_preemption:'][logname] | grep['-E']['to be switched'] | wc['-l']
     num_switched= num_switch.run(retcode=None)[1]
+    num_switched= int(num_switched)
     num_drain=grep['-E']['Start_preemption:'][logname] | grep['-E']['to be drained'] | wc['-l']
     num_drained= num_drain.run(retcode=None)[1]
+    num_drained = int(num_drained)
     num_flush=grep['-E']['Start_preemption:'][logname] | grep['-E']['to be flushed'] | wc['-l']
     num_flushed= num_flush.run(retcode=None)[1]
-    total = int(num_switched) + int(num_drained) + int(num_flushed)
+    num_flushed = int(num_flushed)
+    total = num_switched + num_drained + num_flushed
     value = preempt_timecmd.run(retcode=None)[1]
     value = value.encode('utf-8')
     try:
@@ -106,17 +112,67 @@ for log in logs:
     time_point=re.findall(r'\d+',time_point)
     time_point=int(time_point[0])
     preemption_time=time_point-preempt_point
+
+    #get overhead
+    switchStartCmd=grep['-E']['context switch done'][logname] | awk['{sum += $15} END{if(NR>0) print sum; else print "N/A"}']
+    switchEndCmd=grep['-E']['context switch done'][logname] | awk['{sum += $12} END{if(NR>0) print sum; else print "N/A"}']
+    switchStart= switchStartCmd.run(retcode=None)[1]
+    switchEnd= switchEndCmd.run(retcode=None)[1]
+    switchEnd = str(switchEnd)
+    switchEnd = switchEnd.strip(',')
+    try:
+        switchStart = int(switchStart)
+    except:
+        switchStart = 0
+    try:
+        switchEnd = int(switchEnd)
+    except:
+        switchEnd = 0
+
+    drainStartCmd=grep['-E']['Drain done'][logname] | awk['{sum += $14} END{if(NR>0) print sum; else print "N/A"}']
+    drainEndCmd=grep['-E']['Drain done'][logname] | awk['{sum += $11} END{if(NR>0) print sum; else print "N/A"}']
+    drainStart= drainStartCmd.run(retcode=None)[1]
+    drainEnd= drainEndCmd.run(retcode=None)[1]
+    drainEnd = str(drainEnd)
+    drainEnd = drainEnd.strip(',')
+    try:
+        drainStart = int(drainStart)
+    except:
+        drainStart = 0
+    try:
+        drainEnd = int(drainEnd)
+    except:
+        drainEnd = 0
+    
+    switchLat = switchEnd - switchStart
+    drainLat = drainEnd - drainStart
+    if num_switched > 0:
+        avgSwitchLatPerTb = float(switchLat)/float(num_switched)
+    else:
+        avgSwitchLatPerTb = "N/A"
+
+    if num_drained > 0:
+        avgDrainLatPerTb = float(drainLat)/float(num_drained)
+    else:
+        avgDrainLatPerTb = "N/A"
+
     cur_list[appname,float(time_percentage),int(deadline)]=preemption_time
     per_list[appname,float(time_percentage),int(deadline)]=(float(num_switched)/float(total), float(num_drained)/float(total), float(num_flushed)/float(total))
     context_list[appname,float(time_percentage),int(deadline)]=contextSize
+    switchLat_list[appname,float(time_percentage),int(deadline)]=avgSwitchLatPerTb
+    drainLat_list[appname,float(time_percentage),int(deadline)]=avgDrainLatPerTb
     if PreemptTimeFlag:
         PreemptTimeFlag=0
         csvname="ChimeraPreemptionTimes.csv"
         csvname2="ChimeraChoicePercentages.csv"
         csvname3="ChimeraContextSizePerTB.csv"
+        csvname4="AvgSwitchLatPerTb.csv"
+        csvname5="AvgDrainLatPerTb.csv"
         out=csv.writer(open(csvname,"w"), delimiter=',')
         out2=csv.writer(open(csvname2,"w"), delimiter=',')
         out3=csv.writer(open(csvname3,"w"), delimiter=',')
+        out4=csv.writer(open(csvname4,"w"), delimiter=',')
+        out5=csv.writer(open(csvname5,"w"), delimiter=',')
     if lastName==appname:
         nothing=0
     else:
@@ -124,3 +180,5 @@ for log in logs:
 printPreemptTimes(cur_list, out)
 printPreemptTimes(per_list, out2)
 printPreemptTimes(context_list,out3)
+printPreemptTimes(switchLat_list,out4)
+printPreemptTimes(drainLat_list,out5)
